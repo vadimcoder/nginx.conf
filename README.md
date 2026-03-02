@@ -1,5 +1,6 @@
 
 This config sets up three main optimization layers plus security headers:
+
 **Compression** — Two tiers of on-the-fly compression for text-based assets (HTML, CSS, JS, JSON, XML, SVG). Brotli is the primary (smaller output, faster decompression in browsers), and gzip acts as a fallback for clients that don't support Brotli. brotli_static on means nginx will also serve pre-compressed .br files from disk if they exist, avoiding runtime compression cost entirely. Compression levels (gzip 6, brotli 5) are moderate — good ratio without burning too much CPU.
 
 **File cache** — open_file_cache keeps file descriptors, metadata (size, modification time), and existence info for up to 10,000 files in memory for 60s of inactivity. Files accessed at least twice get cached for 120s. This eliminates repeated stat() and open() syscalls on every request, which matters a lot for static sites with many assets.
