@@ -50,7 +50,7 @@ http {
             image/svg+xml;
 
         ## FILE CACHE (very important for static sites):
-        open_file_cache max=10000 inactive=60s;
+        open_file_cache max=10000 inactive=120s;
         open_file_cache_valid 120s;
         open_file_cache_min_uses 2;
         open_file_cache_errors on;
@@ -69,9 +69,10 @@ server {
     index index.html index.htm;
     include conf.d/security-headers.conf;
 
-    location / {
-        try_files $uri $uri/ =404;
-    }
+    # For SPA ?
+    # location / {
+    #    try_files $uri $uri/ /index.html
+    # }
 
     # DO NOT CACHE index.html:
     location ~ /index\.html$ {
