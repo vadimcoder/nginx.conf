@@ -65,23 +65,32 @@ server {
     listen 443 ssl;
     listen [::]:443 ssl; 
    
-    # DO NOT CACHE HTML:
-    location = /index.html {
-        include snippets/security-headers.conf;
-        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+    root /usr/share/nginx/html;
+    index index.html index.htm;
+    include conf.d/security-headers.conf;
+
+    location / {
+        try_files $uri $uri/ =404;
     }
-   
-    # LONG CACHE IMMUTABLE ASSETS:
+
+    # DO NOT CACHE index.html:
+    location ~ /index\.html$ {
+        add_header Cache-Control "no-cache, no-store, must-revalidate" always;
+        # must re-include because add_header overrides parent headers
+        include conf.d/security-headers.conf;
+    }
+
+    # LONG CACHE immutable assets:
     location ~* \.(js|css|png|jpg|jpeg|gif|ico|svg|woff|woff2|ttf|webp)$ {
-        include snippets/security-headers.conf;
         expires 1y;
         add_header Cache-Control "public, immutable";
+        include conf.d/security-headers.conf;
         access_log off;
     }
 }
 ```
 
-## /etc/nginx/snippets/security-headers.conf:
+## /etc/nginx/conf.d/security-headers.conf:
 
 ```
 add_header X-Frame-Options "SAMEORIGIN" always;
